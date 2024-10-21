@@ -18,9 +18,9 @@
             overflow: hidden;
             display: none; /* Start hidden */
             flex-direction: column;
-            position: fixed; /* Fixed position */
-            bottom: 20px; /* Position from bottom */
-            right: 20px; /* Position from right */
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
             background-color: white;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
@@ -28,7 +28,9 @@
             background-color: #007bff;
             color: white;
             padding: 10px;
-            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         #messages {
             flex: 1;
@@ -41,25 +43,15 @@
             display: flex;
             align-items: flex-end;
         }
-        .user {
-            justify-content: flex-end;
-        }
-        .bot {
-            justify-content: flex-start;
-        }
+        .user { justify-content: flex-end; }
+        .bot { justify-content: flex-start; }
         .user .text, .bot .text {
             padding: 10px;
             border-radius: 10px;
             max-width: 70%;
         }
-        .user .text {
-            background-color: #e1f5fe;
-            color: #000;
-        }
-        .bot .text {
-            background-color: #ffe0b2;
-            color: #000;
-        }
+        .user .text { background-color: #e1f5fe; color: #000; }
+        .bot .text { background-color: #ffe0b2; color: #000; }
         #user-input {
             border: none;
             padding: 10px;
@@ -67,24 +59,11 @@
             width: 100%;
             box-sizing: border-box;
         }
-        #user-input:focus {
-            outline: none;
-        }
-        .bot-image {
-            width: 30px; /* Smaller size for the robot */
-            height: 30px;
-            border-radius: 50%;
-            margin-right: 10px;
-        }
-        .response-image {
-            width: 30px; /* Image size for the bot response */
-            height: 30px;
-            margin-right: 10px;
-        }
+        #user-input:focus { outline: none; }
         #toggle-chat {
             position: fixed;
             bottom: 20px;
-            right: 80px; /* Moved slightly left */
+            right: 80px; 
             background-color: #007bff;
             color: white;
             border: none;
@@ -96,36 +75,25 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            font-size: 24px; /* Larger font for better visibility */
         }
-        #toggle-chat:hover {
-            background-color: #0056b3;
-        }
-        #intents {
-            display: none; /* Start hidden */
-            margin: 10px;
-        }
-        #intents h3 {
-            margin: 0;
-        }
-        #intents input {
-            width: calc(100% - 22px);
-            margin-top: 5px;
-            padding: 10px;
+        #toggle-chat:hover { background-color: #0056b3; }
+        .response-image {
+            width: 30px; /* Adjusted size for better alignment */
+            height: 30px;
+            border-radius: 50%;
+            margin-right: 10px;
         }
     </style>
 </head>
 <body>
-    <button id="toggle-chat" title="Welcome to Rasa Bot">💬</button>
+    <button id="toggle-chat" title="Toggle Chat">💬</button>
     <div id="chat-container">
-        <div id="chat-title">Welcome to Chatbot!</div>
-        <div id="messages"></div>
-        <div id="intents">
-            <h3>Available Intents</h3>
-            <div>
-                <strong>Weather Report:</strong>
-                <input type="text" id="weather-input" placeholder="e.g. How is the weather today?" />
-            </div>
+        <div id="chat-title">
+            <span>Welcome to Chatbot!</span>
+            <button id="close-chat" title="Close Chat" style="background: none; border: none; color: white; cursor: pointer;">✖</button>
         </div>
+        <div id="messages"></div>
         <input type="text" id="user-input" placeholder="Type your message..." />
     </div>
 
@@ -134,32 +102,28 @@
         const userInput = document.getElementById('user-input');
         const chatContainer = document.getElementById('chat-container');
         const toggleChat = document.getElementById('toggle-chat');
-        const intentsDiv = document.getElementById('intents');
-        const weatherInput = document.getElementById('weather-input');
+        const closeChat = document.getElementById('close-chat');
+
+        let isOpen = false; // Track the open/closed state
 
         toggleChat.addEventListener('click', () => {
-            chatContainer.style.display = chatContainer.style.display === 'none' || chatContainer.style.display === '' ? 'flex' : 'none';
-            if (chatContainer.style.display === 'flex') {
+            isOpen = !isOpen; // Toggle state
+            chatContainer.style.display = isOpen ? 'flex' : 'none';
+            toggleChat.innerHTML = isOpen ? '🔒' : '💬'; // Change icon based on state
+
+            if (isOpen) {
                 userInput.focus(); // Focus input when opened
-                intentsDiv.style.display = 'block'; // Show intents when opened
-            } else {
-                intentsDiv.style.display = 'none'; // Hide intents when closed
             }
+        });
+
+        closeChat.addEventListener('click', () => {
+            isOpen = false;
+            chatContainer.style.display = 'none';
+            toggleChat.innerHTML = '💬'; // Reset icon to chat icon
         });
 
         userInput.addEventListener('keypress', (event) => {
             if (event.key === 'Enter') sendMessage();
-        });
-
-        weatherInput.addEventListener('keypress', (event) => {
-            if (event.key === 'Enter') {
-                const weatherMessage = weatherInput.value.trim();
-                if (weatherMessage) {
-                    appendMessage('user', weatherMessage);
-                    weatherInput.value = ''; // Clear input after sending
-                    sendMessage(); // Call sendMessage to handle weather query
-                }
-            }
         });
 
         function sendMessage() {
