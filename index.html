@@ -56,7 +56,7 @@
             border: none;
             padding: 10px;
             border-top: 1px solid #ccc;
-            width: 100%;
+            width: calc(100% - 70px); /* Adjusted width for button */
             box-sizing: border-box;
         }
         #user-input:focus { outline: none; }
@@ -78,6 +78,18 @@
             font-size: 24px; /* Larger font for better visibility */
         }
         #toggle-chat:hover { background-color: #0056b3; }
+        #send-button {
+            border: none;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-left: 5px;
+        }
+        #send-button:hover {
+            background-color: #0056b3;
+        }
         .response-image {
             width: 30px; /* Adjusted size for better alignment */
             height: 30px;
@@ -94,7 +106,10 @@
             <button id="close-chat" title="Close Chat" style="background: none; border: none; color: white; cursor: pointer;">✖</button>
         </div>
         <div id="messages"></div>
-        <input type="text" id="user-input" placeholder="Type your message..." />
+        <div style="display: flex; padding: 10px;">
+            <input type="text" id="user-input" placeholder="Type your message..." />
+            <button id="send-button">Send</button>
+        </div>
     </div>
 
     <script>
@@ -103,6 +118,7 @@
         const chatContainer = document.getElementById('chat-container');
         const toggleChat = document.getElementById('toggle-chat');
         const closeChat = document.getElementById('close-chat');
+        const sendButton = document.getElementById('send-button');
 
         let isOpen = false; // Track the open/closed state
 
@@ -125,6 +141,8 @@
         userInput.addEventListener('keypress', (event) => {
             if (event.key === 'Enter') sendMessage();
         });
+
+        sendButton.addEventListener('click', sendMessage);
 
         function sendMessage() {
             const message = userInput.value.trim();
